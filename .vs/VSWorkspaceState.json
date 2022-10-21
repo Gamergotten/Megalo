@@ -1,7 +1,11 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\Halo Reach",
+    "\\Halo Reach\\Debug scripts",
+    "\\Halo Reach\\Scripts",
+    "\\Halo Reach\\Structs and notes"
   ],
-  "SelectedNode": "\\D:\\VS Projects\\Megalo",
+  "SelectedNode": "\\Halo Reach\\Structs and notes\\authoritative_actions.c",
   "PreviewInSolutionExplorer": false
 }
