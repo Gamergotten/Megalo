@@ -40,7 +40,7 @@ char Evaluate_Condition(Condition* Condition_Address)
     char CounditionTrue;
 
     bVar9 = Condition_Address->function_id;
-    CounditionTrue = 1;
+    CounditionTrue = true;
 
     switch (Condition_Address->function_id)
     {
@@ -58,7 +58,7 @@ char Evaluate_Condition(Condition* Condition_Address)
             iVar3 = GetMegaloPlayer((longlong)Condition_Address);
             uVar7 = FUN_1801cd8a8(*(longlong*)(*(longlong*)(*(longlong*)(in_GS_OFFSET + 0x58) + (ulonglong)GametypeIndex * 8) + 0x20) + 0x168, iVar3);
             if ((uVar7 != 0) && ((Condition_Address->param_slots[3] & 1 << (*(byte*)(uVar7 + 10) & 0x1f)) != 0))
-                goto Complete_Condition_Evaluation;
+                goto Complete_Condition_Evaluation; // idk where this lead to, musta forgot to copy paste it here whoops
             break;
         case conditions.team_disposition:
             iVar3 = GetMegaloTeam((longlong)Condition_Address);

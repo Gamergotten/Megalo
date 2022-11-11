@@ -2,10 +2,10 @@
   "ExpandedNodes": [
     "",
     "\\Halo Reach",
-    "\\Halo Reach\\Debug scripts",
     "\\Halo Reach\\Scripts",
-    "\\Halo Reach\\Structs and notes"
+    "\\Halo Reach\\Structs and notes",
+    "\\Halo Reach\\Widget incident"
   ],
-  "SelectedNode": "\\Halo Reach\\Structs and notes\\authoritative_actions.c",
+  "SelectedNode": "\\Halo Reach\\Widget incident\\DoTokensMatch.c",
   "PreviewInSolutionExplorer": false
 }
