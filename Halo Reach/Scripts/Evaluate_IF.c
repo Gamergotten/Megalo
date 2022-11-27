@@ -1,87 +1,67 @@
 
-uint Evaluate_IF(Condition* Condition)
 
+enum VarType {
+    number = 0,
+    player = 1,
+    object = 2,
+    team = 3,
+    timer = 4
+};
+enum ComparisonType {
+    lessthan = 0,
+    greaterthan = 1,
+    equal = 2,
+    lessthanequal = 3,
+    greaterthanequal = 4,
+    notequal = 5
+};
+
+bool Evaluate_IF(Condition* Condition)
 {
-    uint var2;
-    uint _var2;
-    uint var1;
-    bool Is_True;
-    byte Operator;
-    byte var1_Type;
-
-    Is_True = false;
-    var1_Type = Condition->param_slots[3];
-    if (var1_Type == 0) {
+    int var2;
+    int var1;
+    switch (Condition->param_slots[3]) { // offset of the 1st var's type
+    case VarType.timer:
+        var1 = GetMegaloTimer_butweird(); // looks like i didn't get this function right, params are missing
+        goto numbertimercomparison; // note: in the original code, 2nd var defaults to number if it is not a timer
+    case VarType.number:
         var1 = GetMegaloNumber((short)Condition);
-        // if number ?? number
-        if (Condition->param_slots[7] == 0) {
-        var2_number:
-            _var2 = GetMegaloNumber((short)Condition + 4);
+    numbertimercomparison:
+        if (Condition->param_slots[7] == VarType.number) // offset of the 2nd var's type
+            var2 = GetMegaloNumber((short)Condition + 4);
+        else var2 = GetMegaloTimer_butweird(); // note: if 2nd var is not a number, then defaults to a timer variable
+        switch (Condition->param_slots[8]) { // offset of the comparison type
+        case ComparisonType.lessthan:
+            return (var1 < var2);
+        case ComparisonType.greaterthan:
+            return (var2 < var1);
+        case ComparisonType.equal:
+            return (var1 == var2);
+        case ComparisonType.lessthanequal:
+            return (var1 <= var2);
+        case ComparisonType.greaterthanequal:
+            return (var2 <= var1);
+        case ComparisonType.notequal:
+            return (var1 != var2);
         }
-        else {
-        var2_timer:
-            _var2 = GetMegaloTimer_butweird();
-        }
-        Operator = Condition->param_slots[8];
-        if (Operator == 0) {
-            var2 = _var2 & 0xffffff00 | (uint)((int)var1 < (int)_var2);
-        }
-        else if (Operator == 1) {
-            var2 = _var2 & 0xffffff00 | (uint)((int)_var2 < (int)var1);
-        }
-        else if (Operator == 2) {
-            var2 = _var2 & 0xffffff00 | (uint)(var1 == _var2);
-        }
-        else if (Operator == 3) {
-            var2 = _var2 & 0xffffff00 | (uint)((int)var1 <= (int)_var2);
-        }
-        else if (Operator == 4) {
-            var2 = _var2 & 0xffffff00 | (uint)((int)_var2 <= (int)var1);
-        }
-        else {
-            var2 = _var2 & 0xffffff00 | (uint)(var1 != _var2);
-        }
-        Is_True = SUB41(var2, 0);
+        break; // not possible to reach this but i put it anyway for maintaining the same behaviour as original
+    case VarType.player:
+        var1 = GetMegaloPlayer((longlong)(Condition->param_slots + 4));
+        var2 = GetMegaloPlayer((longlong)Condition);
+        goto non_number_comparison;
+    case VarType.object:
+        var1 = GetMegaloObject((longlong)(Condition->param_slots + 4));
+        var2 = GetMegaloObject((longlong)Condition);
+        goto non_number_comparison;
+    case VarType.team:
+        var1 = GetMegaloTeam((longlong)(Condition->param_slots + 4));
+        var2 = GetMegaloTeam((longlong)Condition);
+        goto non_number_comparison;
     }
-    else {
-        // if player ?? player
-        if (var1_Type == 1) {
-            var1_Type = Condition->param_slots[8];
-            var1 = GetMegaloPlayer((longlong)(Condition->param_slots + 4));
-            var2 = GetMegaloPlayer((longlong)Condition);
-        }
-        else {
-            // if object ?? object
-            if (var1_Type == 2) {
-                var1_Type = Condition->param_slots[8];
-                var1 = GetMegaloObject((longlong)(Condition->param_slots + 4));
-                var2 = GetMegaloObject((longlong)Condition);
-            }
-            else {
-                // if timer ?? timer/number
-                if (var1_Type != 3) {
-                    // if out of range - go to end
-                    if (var1_Type != 4) goto skip_to_end;
-                    var1 = GetMegaloTimer_butweird();
-                    if (Condition->param_slots[7] != 4) goto var2_number;
-                    goto var2_timer;
-                }
-                // if team ?? team
-                // var1_type = operation_type
-                var1_Type = Condition->param_slots[8];
-                var1 = GetMegaloTeam((longlong)(Condition->param_slots + 4));
-                var2 = GetMegaloTeam((longlong)Condition);
-            }
-        }
-        // if var1 == var2
-        if (var1_Type == 2) {
-            Is_True = var2 == var1;
-        }
-        else {
-            Is_True = var2 != var1;
-        }
-    }
-skip_to_end:
-    return var2 & 0xffffff00 | (uint)Is_True;
+    return false; // incase of no case
+non_number_comparison:
+    if (Condition->param_slots[8] == ComparisonType.equal) // offset of the comparison type
+        return var2 == var1;
+    return var2 != var1;
 }
 
